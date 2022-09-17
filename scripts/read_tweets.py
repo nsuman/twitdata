@@ -1,8 +1,10 @@
+import re
 import json
 from ttp import ttp
 from textblob import TextBlob
 from nepali_stemmer.stemmer import NepStemmer
 
+from suffix import Nepali_Suffixes
 from googletrans import Translator
 translator = Translator()
 
@@ -35,20 +37,29 @@ def get_text(tweet):
     for category in to_parse:
         copy_tweet = remove_category(copy_tweet, category)
     return " ".join(copy_tweet.split())
-    
-with open('../tweets_data/BalenShah.json', encoding='utf8',  errors="ignore") as f:
-    f = json.load(f)
+
+
+def get_words(text):
+    words = []
+    stemmed_text = nepstem.stem(text)
+    delimiters = " ", "|", ":", ";", ".", "-", ",", "!", "?", "''"
+    regexPattern = '|'.join(map(re.escape, delimiters))
+    words= re.split(regexPattern, stemmed_text) 
+    suffix_excluded_list = [x for x in words if x not in Nepali_Suffixes ] 
+    words.extend(suffix_excluded_list)
+
+    return words
+
+
+
+with open('../tweets_data/ameetdhakal.json', encoding='utf-8') as f:
+    f = json.load(f, ensure_ascii=False)
     i = 0
     for tweet in f:
         text = get_text(tweet)
-        sentiment = get_sentiment(translate(text))
-        print(text[:100], sentiment)
+        print(get_words(text))
         i += 1
-        if i == 50:
+
+        if (i > 50):
             break
-    
-
-
-
-
     

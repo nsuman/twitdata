@@ -24,3 +24,12 @@ for i in categories:
 profile_file = open('../users_profile/users_profile.json', 'a+')
 json.dump(profile_data, profile_file)
 profile_file.close()
+
+
+def get_all_user_names():
+    usernames = []
+    for category in categories:
+        category_users = json.load(open(os.path.join(USERS_LOCATION, category)))
+        usernames.extend(category_users)
+    return usernames 
+
