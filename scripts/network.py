@@ -24,3 +24,13 @@ def get_data(url_link):
       return []
 
     return res.json()['data'] if contains_data else []
+
+def get_data_and_token(url_link):
+    res = requests.request("GET", url_link, auth=bearer_oauth)
+    print(res.json())
+    contains_data = res.status_code == 200 and 'data' in res.json()
+    if (contains_data):
+        if ('next_token' in res.json()['meta']):
+            return (res.json()['data'], res.json()['meta']['next_token'])
+        return res.json()['data'], None
+    return None
